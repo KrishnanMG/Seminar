@@ -70,7 +70,7 @@
 
 \fancyhf{}
 \fancyhead[LE,LO]{\footnotesize{}}
-\fancyhead[RE,RO]{\footnotesize{Underwater Image Enhancement}}
+\fancyhead[RE,RO]{\footnotesize{Communications and Signals Design for Wireless Power Transmission}}
 \fancyfoot[LE,LO]{\footnotesize{Govt. Model Engineering College}}
 \fancyfoot[RE,RO]{\footnotesize\thepage}
 \renewcommand{\headrulewidth}{1pt}
@@ -100,12 +100,12 @@ APJ ABDUL KALAM TECHNOLOGICAL UNIVERSITY \\
 \textit{Bonafide Certificate}
 \\This is to Certify that the Seminar Report entitled\\
 \vspace{0.5cm}
-\textbf{Colour Balance and Fusion for Underwater Image Enhancement} 
+\textbf{Communications and Signals Design for Wireless Power Transmission} 
 \\
 \vspace{0.5cm}
 Submitted by\\
 \vspace{0.2cm}
-P H Aju\\
+M.G. Krishnan\\
 \vspace{0.2cm}
 is a bonafide account of his work done under our supervision. \\
 \end{center}
@@ -113,15 +113,15 @@ is a bonafide account of his work done under our supervision. \\
 \vspace{2cm}
 \begin{minipage}[t]{10cm}
 \flushleft \textbf{Seminar Co-ordinator}\\
-Prof. Rajesh Mohan R\\
-Associate Professor\\
+Prof. Sunith C.K.\\
+Assistant Professor\\
 Dept. of Electronics and\\
 Communication Engineering
 \end{minipage}
 \vspace{2cm}
 \begin{minipage}[t]{5cm}
 \flushleft \textbf{Seminar Guide}\\
-Prof. Nima Dharmapal\\
+Prof. Arun C.R.\\
 Assistant Professor\\
 Dept. of Electronics and\\
 Communication Engineering
@@ -136,10 +136,10 @@ Communication Engineering
 \chapter*{Abstract}
 \justify
 \textit{
-Underwater environment offers many rare attractions for photography. Underwater imaging has also been an important source of interest in different branches of technology and scientific research. But underwater images suffer from poor visibility resulting from the attenuation of the propagated light. Underwater image dehazing techniques are present but they require complex hardware to capture multiple data of underwater environment. However, these issues can be avoided by using 'Colour Balance and Fusion Technique'. This method is a single image approach that does not require specialized hardware or knowledge about the underwater conditions or scene structure. It builds on the blending of two images that are directly derived from a color compensated and white-balanced version of the original degraded image. The two images to fusion, as well as their associated weight maps, are defined to promote the transfer of edges and color contrast to the output image. To avoid that the sharp weight map transitions create artifacts in the low frequency components of the reconstructed image, a multiscale fusion strategy is adopted. Extensive qualitative and quantitative evaluation reveals that our enhanced images and videos are characterized by better exposedness of the dark regions, improved global contrast, and edges sharpness. This algorithm is reasonably independent of the camera settings, and improves the accuracy of several image processing applications, such as image segmentation and keypoint matching.}\\
+Radiative wireless power transfer (WPT) is a promising technology to provide cost-effective and real-time power supplies to wireless devices. Although radiative WPT shares many similar characteristics with the extensively studied wireless information transfer or communication, they also differ significantly in terms of design objectives, transmitter/receiver architectures and hardware constraints, etc. An overview on the various WPT technologies, the historical development of the radiative WPT technology and the main challenges in designing contemporary radiative WPT systems is given. The state-of-the-art communication and signal processing techniques that can be applied to tackle these challenges are also discussed. Topics discussed include energy harvester modeling, energy beamforming for WPT, channel acquisition, power region characterization in multi-user WPT, waveform design with linear and non-linear energy receiver model, safety and health issues of WPT, massive MIMO (multiple-input multiple-output) and millimeter wave (mmWave) enabled WPT, wireless charging control, and wireless power and communication systems codesign. Directions that are promising for future research are also discussed.}\\
 
 \textit{\textbf{keyword}}- 
-Underwater Optical Model, Red Channel Equalisation, Gray World, Multi-Scale Fusion, Gaussian Pyramid.
+Wireless power transfer, energy beamforming, channel estimation and feedback, non-linear energy harvesting model, waveform design.
 %\end{keyword}
 %\sep%
 
@@ -168,44 +168,36 @@ Underwater Optical Model, Red Channel Equalisation, Gray World, Multi-Scale Fusi
 
 \section*{List of Abbreviations}
 \begin{flushleft}
-DCP -  Dark Channel Prior\\ 
+WPT -  Wireless Power Transfer\\ 
 \vspace{0.5cm}
-UDCP - Underwater Dark Channel Prior\\
+MIMO - Multiple Input Multiple Output\\
 \vspace{0.5cm}
-SIFT - Scale-Invariant Feature Transform\\
+LoS - Line of Sight\\
 \vspace{0.5cm}
-UWLI - Underwater Lidar Imaging System\\
+SWIPT - Simultaneous Wireless Information and Power Transfer\\
 \vspace{0.5cm}
-HR - High Resolution\\
+ET - Energy Transmitter\\
 \vspace{0.5cm}
-MDCP - Median Dark Channel Prior\\
+ER - Energy Receiver\\
 \vspace{0.5cm}
-BP - Background Prior\\
+RF - Radio Frequency\\
 \vspace{0.5cm}
-HDR - High-Dynamic-Range\\
+CSI - Channel State Information\\
 \vspace{0.5cm}
-CVPR - Computer Vision and Pattern Recognition\\
-\vspace{0.5cm}
-GAC - Global Assembly Cache\\
-\vspace{0.5cm}
-PDE - Partial Different Equation\\
+OFDM - Orthogonal Frequency Division Multiplexing\\
 \end{flushleft}
 \pagebreak
 
 \addcontentsline{toc}{chapter}{Acknowledgement}
 \section*{Acknowledgement}
 \justify
-On the recollection of so many great favors and blessings, I offer my sincere thanks to the Almighty, the Creator and Preserver.\\
+\\On the recollection of so many great favors and blessings, I offer my sincere thanks to the Almighty, the Creator and Preserver.\\
 %\vspace{1cm}
 
 I express my heartfelt gratitude to \textbf{Prof. Dr. V P Devassia}, Principal, Govt. Model Engineering College, Thrikkakara for providing me with excellent library facilities. \\
-I sincerely thank Prof. Nima Dharmapal, Assistant Professor of Department of Electronics and Communication Engineering, for her timely advice and suggestions.\\
+I am thankful to my seminar coordinator \textbf{Mr. Sunith C. K.}, Assistant Professor, Department of Electronics and Communication Engineering, and \textbf{Mrs. Swapna P. P.}, Assistant Professor, Department of Electronics and Communication Engineering for the full-fledged support and guidance. I sincerely thank \textbf{Prof. Arun C.R.} , Assistant Professor of Department of Electronics and Communication Engineering, for his timely advice and motivating me to do everything in a better way.\\
 
-%I am thankful to my seminar coordinator \textbf{Prof. Rajesh Mohan R}, Associate Professor, Department of Electronics and Communication Engineering for the full-fledged support and guidance. I would like to express my sincere gratitude to \textbf{Dr. Jobymol Jacob}, Professor, Department of Electronics and Communication Engineering, who has always motivated me and helped me to do everything in a better way.  \\
-%\vspace{1cm}
-
-Last but not the least I am thankful to one and all of the Department of Electronics and Communication Engineering and the whole library staff for their co-operation and active involvement.
-I also thank my colleagues for their support.
+Last but not the least I am thankful to one and all of the Department of Electronics and Communication Engineering and the whole library staff for their co-operation and active involvement. I also thank my colleagues for their support.
 \hbox{} \newpage 
 \pagenumbering{arabic} 
 \pagestyle{fancy}
