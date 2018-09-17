@@ -243,169 +243,36 @@ wireless power and communication systems share several similar characteristics a
 \section{Antenna Model}
 \justify
 The antenna model reflects the power transfer from the antenna to the rectifier through the matching network. As illustrated in Fig. 2, a lossless antenna can be modelled as a voltage source vs(t) followed by a series resistance Rant (right). Let Zin = Rin + jXin denote the input impedance of the rectifier with the matching network. Assuming perfect matching, all the available RF power Prrf is transferred to the rectifier and absorbed by Rin, so that vin(t) = vs(t)/2. 
-
-
-
-
-
-ed, compared to green. Therefore, to compensate the red attenuation, a fraction of the green channel is added to red. The information of the green channel alone allows better recovery of the entire color spectrum while maintaining a natural appearance of the background(water regions) than adding both a fraction of green and blue to the red.}
-\item{The compensation should be proportional to the difference between the mean green and the mean red values because, under the Gray World assumption (all channels have the same mean value before attenuation), this difference reflects the disparity/unbalance between red and green attenuation.}
-\item{To avoid saturation of the red channel during the Gray World step that follows the red loss compensation, the enhancement of red should primarily affect the pixels with small red channel values, and should not change pixels that already include a significant red component. In other words, the green channel information should not be transferred in regions where the information of the red channel is still significant. Thereby, the reddish appearance introduced by the Gray-World algorithm in the over-exposed regions should be avoided. Basically, the compensation of the red channel has to be performed only in those regions that are highly attenuated. This argument follows the statement, telling that if a pixel has a significant value for the three channels, this is because it lies in a location near the observer, or in an artificially illuminated area, and does not need to be restored.}
-\end{itemize}
-Mathematically, to account for the above observations, we propose to express the compensated red channel $I_{rc}$ at every pixel location $(x)$ as follows:
-\begin{equation}
-I_{rc}(x)=I_r(x)+\alpha.(\overline{I}_g-\overline{I}_r).(1-I_r(x)).I_g(x)
-\end{equation}
-where $I_r$, $I_g$ represent the red and green color channels of image $I$, each channel being in the interval $[0, 1]$, after normalization by the upper limit of their dynamic range, while $\overline{I}_r$ and $\overline{I}_g$ denote the mean value of $I_r$ and $I_g$. Each factor in the second term directly results from one of the above observations, and α denotes a constant parameter. In practice, our tests have revealed that a value of $\alpha=1$ is appropriate for various illumination conditions and acquisition settings.\\
-To complete our discussion about the severe and color-dependent attenuation of light under water, it is worth noting the works, which reveal and exploit the fact that, in turbid waters or in places with high concentration of plankton, the blue channel may be significantly attenuated due to absorption by organic matter. To address those cases, when blue is strongly attenuated and the compensation of the red channel appears to be insufficient, we propose to also compensate for the blue channel attenuation, i.e. we compute the compensated blue channel $I_{bc}$ as:
-\begin{equation}
-I_{bc}(x)=I_b(x)+\alpha.(\overline{I}_g-\overline{I}_b).(1-I_b(x)).I_g(x)
-\end{equation}
-where $I_b$ , $I_g$ represent the blue and green color channels of image $I$, and $\alpha$ is also set to $1$. After the red (and optionally the blue) channel attenuation has been compensated, the conventional Gray-World assumption is done to estimate and compensate the illuminant color cast. This white-balancing approach reduces the quantization artifacts introduced by domain stretching (the red regions in the different outputs). The reddish appearance of high intensity regions is also well corrected since the red channel is better balanced.\\
-Additionally, this white balancing strategy yields significant improvement in estimating transmission based on the well-known DCP. Estimating the transmission maps based on DCP, using the initial underwater images but also the processed versions with several well-known white balancing approaches (Gray Edge, Shades of Gray, Max RGB and Gray World) yields poor estimates. In contrast, by simply applying DCP on our white balanced
-image version we obtain comparable and even better estimates than the specialized underwater techniques of UDCP, MDCP and BP.
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm,height=5cm]{Transmission.png}
-\caption[Underwater Transmission Estimation]{Underwater Transmission Estimation}
-\label{Underwater Transmission Estimation}
-\end{figure}
-
-\chapter{Multi-Scale Fusion}
+\section{Rectifier and Diode Model}
 \justify
-Image fusion has shown utility in several applications such as image compositing, multispectral video enhancement, defogging, and HDR imaging. Here, the aim is a simple and fast approach that is able to increase the scene visibility in a wide range of underwater videos and images. This framework builds on a set of inputs and weight maps derived from a single original image. A pair of inputs is introduced to respectively enhance the color contrast and the edge sharpness of the white-balanced image, and the weight maps are defined to preserve the qualities and reject the defaults of those inputs, i.e. to overcome the artifacts induced by the light propagation limitation in underwater medium.\\To derive the inputs from the original image, the CVPR algorithm did assume that the back-scattering component (due to the artificial light that hits the water particles and is then reflected back to the camera) has a reduced influence. This assumption is generally valid for underwater scenes decently illuminated by natural light, but fails in more challenging illumination scenarios. Alternative definition of inputs and weights are taken in order to deal with severley degraded scenes without relying on the optical model.\\ This underwater dehazing technique consists in three main steps: inputs derivation from the white balanced underwater image, weight maps definition, and multi-scale fusion of the inputs and weight maps.
+Consider a single receive antenna and a rectifier composed of a single series diode followed by a low-pass filter with load as shown in Fig. 2.  Denoting the voltage drop across the diode as vd(t) = vin(t)−vout(t) where vin(t) is the input voltage to the diode and vout(t) is the output voltage across the load resistor. 
 
-\section{Inputs of the Fusion Process}
-Since the color correction is critical in underwater, first the white balancing technique is applied to the original image. This step aims at enhancing the image appearance by discarding unwanted color casts caused by various illuminants. In water deeper than 30 ft, white balancing suffers from noticeable effects since the absorbed colors are difficult to be recovered. As a result, to obtain the \textbf{first} input, a gamma correction of the white balanced image version is performed. Gamma correction aims at correcting the global contrast and is relevant since, in general, white balanced underwater images tend to appear too bright. This correction increases the difference between darker/lighter regions at the cost of a loss of details in the under-/over-exposed regions.\\ To compensate for this loss, a \textbf{second} input is derived that corresponds to a sharpened version of the white balanced image. Therefore, the unsharp masking principle is followed in the sense that a blurred or unsharp (here Gaussian filtered) version of the image is blended with the image to sharpen. The typical formula for unsharp masking defines the sharpened image $S$ as $S=I+\beta(I-G*I)$, where $I$ is the image to sharpen (in our case the white balanced image), $G∗I$ denotes the Gaussian filtered version of $I$, and $\beta$ is a parameter. In practice, the selection of $\beta$ is not trivial. A small $\beta$ fails to sharpen $I$, but a too large $\beta$ results in over-saturated regions, with brighter highlights and darker shadows. To circumvent this problem, the sharpened image $S$ is defined as follows:
-\begin{equation}
-S=(I+N(I-G*I))/2
-\end{equation}
-with $N{.}$ denoting the linear normalization operator, also named histogram stretching in the literature. This operator shifts and scales all the color pixel intensities of an image with a unique shifting and scaling factor defined so that the set of transformed pixel values cover the entire available dynamic range.The sharpening method defined is referred to as normalized unsharp masking process in the following. It has the advantage to not require any parameter tuning, and appears to be effective in terms of sharpening. 
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm,height=3.5cm]{NUM.png}
-\caption[Comparison between traditional Unsharp Masking and normalized Unharp Masking]{Comparison between traditional unsharp masking and normalized Unharp Masking}
-\label{Comparison between traditional Unsharp Masking and normalized Unharp Masking}
-\end{figure}
-This second input primarily helps in reducing the degradation caused by scattering. Since the difference between white balanced image and its Gaussian filtered version is a highpass signal that approximates the opposite of Laplacian, this operation has the inconvenient to magnify the high-frequency noise, thereby generating undesired artifacts in the second input. The multi-scale fusion strategy described in the next section will be in charge of minimizing the transfer of those artifacts to the final blended image.
 
-\section{Weights of the Fusion Process}
-The weight maps are used during blending in such a way that pixels with a high weight value are more represented in the final image. They are thus defined based on a number of local image quality or saliency metrics.
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Future of Radiative WPT}
+\justify
+
+
 \begin{itemize}
-\item{\textbf{\textit{Laplacian contrast weight}} ($W_L$) estimates the global contrast by computing the absolute value of a Laplacian filter applied on each input luminance channel. This straightforward indicator was used in different applications such as tone mapping and extending depth of field since it assigns high values to edges and texture. For the underwater dehazing task, however, this weight is not sufficient to recover the contrast, mainly because it can not distinguish much between a ramp and flat regions. So additional and complementary constrast assessment metric is introduced.}
-\item{\textbf{\textit{Saliency weight}} ($W_S$) aims at emphasizing the salient objects that lose their prominence in the underwater scene. To measure the saliency level, a saliency estimator is employed. This computationally efficient algorithm has been inspired by the biological concept of center-surround contrast. However, the saliency map tends to favor highlighted areas (regions with high luminance values). To overcome this limitation, an additional weight map based on the observation that saturation decreases in the highlighted regions is introduced.}
-\item{\textbf{\textit{Saturation weight}} ($W_{Sat}$) enables the fusion algorithm to adapt to chromatic information by advantaging highly saturated regions. This weight map is simply computed (for each input $I_k$) as the deviation (for every pixel location) between the $R_k$, $G_k$ and $B_k$ color channels and the luminance $L_k$ of the $k^{th}$ input:
-\begin{equation}
-W_{sat}=\sqrt{(1/3)[(R_k-L_k)^2+(G_k-L_k)^2+(B_k-L_k)^2]}
-\end{equation}
-}
-\end{itemize}
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm,height=3cm]{Weight.png}
-\caption[Weight Maps]{Weight Maps}
-\label{Weight Maps}
-\end{figure}
-In practice, for each input, the three weight maps are merged in a single weight map as follows. For each input $k$, an aggregated weight map $W_k$ is first obtained by summing up the three $W_L$ , $W_S$ , and $W_{Sat}$ weight maps. The $K$ aggregated maps are then normalized on a pixel-per-pixel basis, by dividing the weight of each pixel in each map by the sum of the weights of the same pixel over all maps. Formally, the
-normalized weight maps $\overline{W}_k$ are computed for each input as:
-\begin{equation}
-\overline{W}_{k}=(W_k+\delta)/(\sum_{k=1}^{K}W_k + K.\delta)
-\end{equation}
-with $\delta$ denoting a small regularization term that ensures that each input contributes to the output. $\delta$ is set to 0.1 in the rest of the paper. The normalized weights of corresponding weights are shown. These three weight maps are used. The exposedness weight map tends to amplify some artifacts, such as ramp edges of our second input, and to reduce the benefit derived from the gamma corrected image in terms of image contrast. Originally, in an exposure fusion context, the exposedness weight map had been introduced to reduce the weight of pixels that are under- or over-exposed. Hence, this weight map assigns large (small) weight to input pixels that are close to (far from) the middle of the image dynamic range. Here since the gamma corrected input tends to exploit the whole dynamic range, the use of the exposedness weight map tends to penalize it in favor of the sharpened image, thereby inducing some sharpening artifacts and missing some contrast enhancements.
+\item{Safety and Health Issues: Like any other RF-based wireless systems, WPT systems need to comply with the various safety guidelines to minimize the potential biological effects caused by RF energy. High level RF exposure is harmful to human body due to the rapid heating and thus possibly causes damage to biological tissue. Two widely adopted measures on RF exposure are specific absorbtion rate (SAR) and maximum permissible exposure (MPE), which could be taken into account for WPT systems design. SAR is a measure of the rate at which energy is absorbed by the human body when exposed to RF field.  MPE is defined as the highest level of RF exposure to which a person may be exposed without incurring an established adverse health effect.}
+\begin{itemize}
+\item{Massive MIMO and MmWave WPT: Massive MIMO is a key enabling technology for the fifth-generation (5G) wireless communication systems by tremendously increasing the spectrum efficiency via deploying a large number of antennas. , massive MIMO is also an appealing technique to enhance the end-to-end power transfer efficiency by deploying large antenna arrays at the ETs. 5G is millimeter wave (mmWave) communication [182], [183], which utilizes the large available bandwidth at mmWave frequencies (typically from around 30GHz to 300GHz) and large antenna arrays at the BSs (also possibly at the mobile stations) to enable Gigabits per second (Gbps) radio access. }
+\begin{itemize}
+\item{Wireless Charging Control: For WPT networks with a large number of ETs serving massive ERs, effective wireless charging control mechanisms need to be devised for real-time decisions such as user scheduling [190], frequency usage, ER and ET association and on/off control [191], and the amount of power to be transmitted, etc. Efficient wireless charging control is in general a complicated task that needs to both minimize energy outage and also avoid battery over-charging/overflow.}
+\begin{itemize}
+\item{Joint Design with Wireless Communications: As wireless power and communication systems both use RF waveforms as the energy/information carrier, they could be jointly designed to seamlessly integrate each other. There are three main lines of research along this direction, namely SWIPT, wireless powered communications, and coexisting design of WPT and wireless communication systems.}
 
-\section{Naive Fusion Process}
-Given the normalized weight maps, the reconstructed image $R(x)$ could typically be obtained by fusing the defined inputs with the weight measures at every pixel location $(x)$:
-\begin{equation}
-R(x)=\sum_{k=1}^{K}\overline{W}_k(x)I_k(x)
-\end{equation}
-where $I_k$ denotes the input ($k$ is the index of the inputs $K=2$ in our case) that is weighted by the normalized weight maps $\overline{W}_k$. In practice, the naive approach introduces undesirable halos. A common solution to overcome this limitation is to employ multi-scale linear, or non-linear filters.
 
-\section{Multi-Scale Fusion Process}
-The multi-scale decomposition is based on Laplacian pyramid. The pyramid representation decomposes an image into a sum of bandpass images. In practice, each level of the pyramid does filter the input image using a low-pass Gaussian kernel $G$, and decimates the filtered image by a factor of 2 in both directions. It then subtracts from the input an up-sampled version of the low-pass image, thereby approximating the (inverse of the) Laplacian, and uses the decimated low-pass image as the input for the subsequent level of the pyramid. Formally, using $G_l$ to denote a sequence of $l$ low-pass filtering and decimation, followed by $l$ up-sampling operations, we define the $N$ levels $L_l$ of the pyramid as follows:
-\begin{equation}
-\begin{split}
-I(x) & = I(x)-G_1[I(x)]+G_1[I(x)] \triangleq L_1[I(x)]+G_1[I(x)]\\
-& = L_1[I(x)]+G_1[I(x)]-G_2[I(x)]+G_2[I(x)]\\
-& = L_1[I(x)]+L_2[I(x)]+G_2[I(x)]\\
-& = ...\\
-& = \sum_{l=1}^{N}L_l[I(x)]
-\end{split}
-\end{equation}
-In this equation, $L_l$ and $G_l$ represent the $l^{th}$ level of the Laplacian and Gaussian pyramid, respectively. To write the equation, all those images have been up-sampled to the original image dimension. However, in an efficient implementation, each level $l$ of the pyramid is manipulated at native subsampled resolution. Following the traditional multi-scale fusion strategy, each source input $I_k$ is decomposed into a Laplacian pyramid while the normalized weight maps $\overline{W}_k$ are decomposed using a Gaussian pyramid. Both pyramids have the same number of levels, and the mixing of the Laplacian inputs with the Gaussian normalized weights is performed independently at each level $l$:
-\begin{equation}
-R_l(x)=\sum_{k=1}^{K}G_l[\overline{W}_k(x)]L_1[I_k(x)]
-\end{equation}
-where $l$ denotes the pyramid levels and $k$ refers to the number of input images. In practice, the number of levels $N$ depends on the image size, and has a direct impact on the visual quality of the blended image. The dehazed output is obtained by summing the fused contribution of all levels, after appropriate upsampling.
-\begin{figure}[H]
-\centering
-\includegraphics[width=16cm,height=8cm]{Dehaze.png}
-\caption[Overview of Dehazing Schemes]{Overview of Dehazing Schemes}
-\label{Overview of Dehazing Schemes}
-\end{figure}
-By independently employing a fusion process at every scale level, the potential artifacts due to the sharp transitions of the weight maps are minimized. Multi-scale fusion is motivated by the human visual system, which is very sensitive to sharp transitions appearing in smooth image patterns, while being much less sensitive to variations/artifacts occurring on edges and textures (masking phenomenon). This single- scale approximation should definitely be encouraged when complexity is an issue, since it also turns the multiresolution process into a spatially localized procedure.
-
-\chapter{Results and Discussion}
-This dehazing technique is compared with the existing specialized underwater restoration/enhancement techniques and the utility of this approach for applications such as segmentation and keypoint matching is proved.
-\section{Video Dehazing}
-The proposed strategy was tested for real underwater image and videos taken from different available amateur and professional photographer collections, captured using various cameras and setups. Processing only 8-bit data format makes this validation relevant for common
-low-end cameras. Interestingly, this fusion-based algorithm has the advantage to employ only a reduced set of parameters that can be automatically set. Specifically, the white balancing process relies on the single parameter $\alpha$, which is set to 1 in all our experiments. For the multi-scale fusion, the number of decomposition levels depends on the image size, and is defined so that the size of the smallest resolution reaches a few tenth of pixels.
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm,height=5cm]{Video.png}
-\caption[Underwater Video Dehazing]{Underwater Video Dehazing}
-\label{Underwater Video Dehazing}
-\end{figure}
-This approach generally results in good perceptual quality, with significant enhancement of the global contrast, the color, and the image structure details. The main limitations are related to the fact that: (i) color can not always be fully restored, and (ii) some haze is maintained, especially in the scene regions that are far from the camera. Those limitations are however limited, especially when compared to previous works.
-\section{Applications}
-\subsection{Segmentation}
-Segmentation aims at dividing images into disjoint and homogeneous regions with respect to some characteristics (e.g. texture, color). In this work, we employ the GAC++ segmentation algorithm, which corresponds to a seminal geodesic active contours method (variational PDE). The segmentation result is more consistent when segmentation is applied to images that have been processed by this approach.
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm,height=13cm]{Segment.png}
-\caption[Image Segmentation]{Image Segmentation}
-\label{Image Segmentation}
-\end{figure}
-\subsection{Local Feature-point Matching}
-Local feature points matching is a fundamental task of many computer vision applications. The SIFT operator is employed to compute keypoints, and compare the keypoint computation and matching processes for a pair of underwater images, with the one computed for the corresponding pair of images enhanced by this method. The original implementation of SIFT is applied exactly in the same way in both cases. The promising achievements presented demonstrates that, by enhancing the global contrast and the local features in underwater images, our method significantly increases the number of matched pairs of keypoints.
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm,height=9cm]{Feature.png}
-\caption[Local Feature-point Matching]{Local Feature-point Matching}
-\label{Local Feature-point Matching}
-\end{figure}
-
-\chapter{Conclusion}
-This Single image Fusion process an alternative approach to enhance underwater videos and images. This strategy builds on the fusion principle and does not require additional information than the single original image. Experiments prove that this approach is able to enhance a wide range
-of underwater images (e.g. different cameras, depths, light conditions) with high accuracy, being able to recover important faded features and edges.
-
-\addcontentsline{toc}{chapter}{Bibliography}
-\begin{thebibliography}{1}
-\bibitem{} R. Schettini and S. Corchs, “Underwater image processing: state of the art of restoration and image enhancement methods,” EURASIP J. Adv. Signal Process., vol. 2010, Dec. 2010, Art. no. 746052 
-
-\bibitem{} G. L. Foresti, “Visual inspection of sea bottom structures by an autonomous underwater vehicle,” IEEE Trans. Syst., Man, Cybern. B, Cybern., vol. 31, no. 5, pp. 691–705, Oct. 2001
-
-\bibitem{} M. D. Kocak, F. R. Dalgleish, M. F. Caimi, and Y. Y. Schechner, “A focus on recent developments and trends in underwater imaging,” Marine Technol. Soc. J., vol. 42, no. 1, pp. 52–67, 2008
-
-\bibitem{} C. Ancuti, C. O. Ancuti, C. De Vleeschouwer, and A. Bovik, “Night-time dehazing by fusion,” in Proc. IEEE ICIP, Sep. 2016, pp. 2256–2260
-
-\bibitem{} K. He, J. Sun, and X. Tang, “Single image haze removal using dark channel prior,” IEEE Trans. Pattern Anal. Mach. Intell., vol. 33, no. 12, pp. 2341–2353, Dec. 2011
-
-\bibitem{} P. Drews, Jr., E. Nascimento, F. Moraes, S. Botelho, M. Campos, and R. Grande-Brazil, “Transmission estimation in underwater single images,” in Proc. IEEE ICCV, Dec. 2013, pp. 825–830
-
-\bibitem{} A. Galdran, D. Pardo, A. Picón, and A. Alvarez-Gila, “Automatic red-channel underwater image restoration,” J. Vis. Commun. Image Represent., vol. 26, pp. 132–145, Jan. 2015
-
-\bibitem{} H. Lu, Y. Li, L. Zhang, and S. Serikawa, “Contrast enhancement for images in turbid water,” J. Opt. Soc. Amer. A, Opt. Image Sci., vol. 32, no. 5, pp. 886–893, May 2015
-
-\bibitem{} R. Fattal, “Dehazing using color-lines,” ACM Trans. Graph., vol. 34, Nov. 2014, Art. no. 13
-\bibitem{} C. Ancuti, C. O. Ancuti, T. Haber, and P. Bekaert, “Enhancing underwater images and videos by fusion,” in Proc. IEEE CVPR, Jun. 2012,
-pp. 81–88
-
-\bibitem{} {https://www.youtube.com/watch?v=dWCsUxbOYaI}
-
-\bibitem{} {https://github.com/mohitkumarahuja/Underwater-Image-Enhancement-by-Wavelength-Compensation-and-Dehazing}
-
-\bibitem{} {https://github.com/zhenglab/UnderwaterImageRestoration/tree/master/underwater\%20image\%20enhancement}
-
-\bibitem{} {https://pdfs.semanticscholar.org/045e/b4ccdc3050a951164966dda189f44bc680fd.pdf}
-\end{thebibliography}
 \end{document}
